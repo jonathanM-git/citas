@@ -32,15 +32,14 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useCounterStore } from '../stores/counter';  // Importamos la tienda de Pinia
+import { useCounterStore } from '../stores/counter';
+import apiService from '../services/apiService';
 
 const user = ref(null);
 const message = ref("");
-const date = ref(""); // Fecha de nacimiento
-
-// Acceder al store de Pinia para manejar el token
+const date = ref("");
 const counterStore = useCounterStore();
-const token = counterStore.getToken;  // Obtener el token desde el store
+const token = counterStore.getToken;
 
 const fetchUserProfile = async () => {
   if (!token) {
@@ -49,13 +48,7 @@ const fetchUserProfile = async () => {
   }
 
   try {
-    const response = await fetch("http://127.0.0.1:5000/profile", {
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json",
-      }
-    });
-
+    const response = await apiService.getUserProfile(token);
     if (response.ok) {
       user.value = await response.json();
     } else {
@@ -69,28 +62,12 @@ const fetchUserProfile = async () => {
 const updateProfile = async () => {
   if (!user.value) return;
 
-  // Convertir la fecha al formato correcto (DD/MM/YYYY)
   const formattedDate = formatDate(date.value);
 
   try {
-    const response = await fetch("http://127.0.0.1:5000/currentUser", {
-      method: "PATCH",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        ...user.value,
-        date: formattedDate, // Usar la fecha formateada
-      }),
-    });
-
+    const response = await apiService.updateUserProfile(token, { ...user.value, date: formattedDate });
     const result = await response.json();
-    if (response.ok) {
-      message.value = "Perfil actualizado correctamente";
-    } else {
-      message.value = result.msg || "Error al actualizar el perfil";
-    }
+    message.value = response.ok ? "Perfil actualizado correctamente" : result.msg || "Error al actualizar el perfil";
   } catch (error) {
     console.error("Error al actualizar:", error);
     message.value = "Error al actualizar el perfil";
@@ -98,14 +75,15 @@ const updateProfile = async () => {
 };
 
 const formatDate = (inputDate) => {
-  const [day, month, year] = inputDate.split('/'); // Se asume formato DD/MM/YYYY
-  return `${day}/${month}/${year}`; // Devolver el formato DD/MM/YYYY
+  const [day, month, year] = inputDate.split('/');
+  return `${day}/${month}/${year}`;
 };
 
 onMounted(() => {
   fetchUserProfile();
 });
 </script>
+
 
 <style scoped>
 .perfil-container {

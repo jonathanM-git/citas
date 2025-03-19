@@ -26,65 +26,31 @@
   </template>
   
   <script setup>
-  import { ref, onMounted } from 'vue';
-  import { useCounterStore } from '../stores/counter';
-  
-  const counterStore = useCounterStore();
-  const centros = ref([]);
-  const citas = ref([]);
-  const citasFiltradas = ref([]);
-  const centroSeleccionado = ref("");
-  const citasCentro = ref([]);  // 🔹 Aquí definimos citasCentro
+import { ref, onMounted } from 'vue';
+import { useCounterStore } from '../stores/counter';
+import apiService from '../services/apiService';
 
-  
-  const obtenerCentros = async () => {
-    try {
-      let response = await fetch("http://127.0.0.1:5000/centers", {
-        headers: {
-          "Authorization": "Bearer " + counterStore.getToken
-        }
-      });
-      centros.value = await response.json();
-    } catch (error) {
-      console.error("Error obteniendo centros", error);
-    }
-  };
-  
-  const obtenerCitas = async () => {
-    try {
-      let response = await fetch("http://127.0.0.1:5000/dates", {
-        headers: {
-          "Authorization": "Bearer " + counterStore.getToken
-        }
-      });
-      citas.value = await response.json();
-    } catch (error) {
-      console.error("Error obteniendo citas", error);
-    }
-  };
-  
-  const obtenerCitasCentro = async (centro) => {
+const counterStore = useCounterStore();
+const centros = ref([]);
+const citasCentro = ref([]);
+const centroSeleccionado = ref("");
+
+const obtenerCentros = async () => {
   try {
-    let response = await fetch("http://127.0.0.1:5000/dates", {
-      headers: {
-        "Authorization": "Bearer " + counterStore.getToken
-      }
-    });
+    let response = await apiService.getCenters(counterStore.getToken);
+    centros.value = await response.json();
+  } catch (error) {
+    console.error("Error obteniendo centros", error);
+  }
+};
 
+const obtenerCitasCentro = async (centro) => {
+  try {
+    let response = await apiService.getDates(counterStore.getToken);
     if (!response.ok) throw new Error("Error obteniendo citas");
 
     let data = await response.json();
-    //console.log("Citas obtenidas:", data); Obtienes todas las citas
-
-    // Filtramos las citas usando 'center'
-    citasCentro.value = data.filter(cita => {
-      //console.log(`Revisando cita:`, cita);
-      return cita.center === centro;
-    });
-
-    console.log(`Citas filtradas para el centro ${centro}:`, citasCentro.value);
-
-    // Actualizamos el nombre del centro seleccionado
+    citasCentro.value = data.filter(cita => cita.center === centro);
     centroSeleccionado.value = centro;
 
   } catch (error) {
@@ -93,10 +59,9 @@
   }
 };
 
-  
-  onMounted(() => {
-    obtenerCentros();
-    obtenerCitas();
-  });
-  </script>
+onMounted(() => {
+  obtenerCentros();
+});
+</script>
+
   

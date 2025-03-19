@@ -31,6 +31,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useCounterStore } from '../stores/counter';
+import apiService from '../services/apiService';
 
 const counterStore = useCounterStore();
 const centros = ref([]);
@@ -42,14 +43,19 @@ const successMessage = ref('');
 
 const obtenerCentros = async () => {
   try {
-    let response = await fetch("http://127.0.0.1:5000/centers", {
-      headers: {
-        "Authorization": "Bearer " + counterStore.getToken
-      }
-    });
+    let response = await apiService.getCenters(counterStore.getToken);
     centros.value = await response.json();
   } catch (error) {
     console.error("Error obteniendo centros", error);
+  }
+};
+
+const obtenerCitas = async () => {
+  try {
+    let response = await apiService.getUserDates(counterStore.getToken);
+    citas.value = await response.json();
+  } catch (error) {
+    console.error("Error obteniendo citas", error);
   }
 };
 
@@ -61,17 +67,7 @@ const crearCita = async () => {
 
   let formattedDate = selectedDate.value.split('-').reverse().join('/') + " 14:00:00";
   try {
-    let response = await fetch("http://127.0.0.1:5000/date/create", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + counterStore.getToken
-      },
-      body: JSON.stringify({
-        center: selectedCenter.value,
-        date: formattedDate
-      })
-    });
+    let response = await apiService.createDate(counterStore.getToken, selectedCenter.value, formattedDate);
     let result = await response.json();
     if (response.ok) {
       successMessage.value = result.msg;
@@ -84,32 +80,9 @@ const crearCita = async () => {
   }
 };
 
-const obtenerCitas = async () => {
-  try {
-    let response = await fetch("http://127.0.0.1:5000/date/getByUser", {
-      headers: {
-        "Authorization": "Bearer " + counterStore.getToken
-      }
-    });
-    citas.value = await response.json();
-  } catch (error) {
-    console.error("Error obteniendo citas", error);
-  }
-};
-
 const cancelarCita = async (cita) => {
   try {
-    let response = await fetch("http://127.0.0.1:5000/date/delete", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + counterStore.getToken
-      },
-      body: JSON.stringify({
-        center: cita.center,
-        date: cita.date
-      })
-    });
+    let response = await apiService.cancelDate(counterStore.getToken, cita.center, cita.date);
     let result = await response.json();
     if (response.ok) {
       successMessage.value = result.msg;
@@ -127,6 +100,7 @@ onMounted(() => {
   obtenerCitas();
 });
 </script>
+
 
 <style scoped>
 .citas-container {

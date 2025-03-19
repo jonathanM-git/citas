@@ -17,72 +17,47 @@
 </template>
 
 <script setup>
-  import { ref } from 'vue';
-  import { useRouter } from 'vue-router';
-  import { useCounterStore } from '../stores/counter';  // Importamos la tienda de Pinia
-  const router = useRouter();
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useCounterStore } from '../stores/counter';
+import apiService from '../services/apiService';
 
-  // Usamos la tienda de Pinia
-  const counterStore = useCounterStore();
+const router = useRouter();
+const counterStore = useCounterStore();
+const username = ref("");
+const password = ref("");
+const message = ref("");
+const isSuccess = ref(false);
 
-  const username = ref("");
-  const password = ref("");
-  const message = ref("");
-  const isSuccess = ref(false);
-
-  const login = async () => {
-    let response = await fetch("http://127.0.0.1:5000/login", {
-      method: "POST",
-      body: JSON.stringify({
-        username: username.value,
-        password: password.value
-      }),
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-      }
-    });
-
-    return await response.json();
-  };
-
-  const getCenters = async () => {
-    let response = await fetch("http://127.0.0.1:5000/centers", {
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "Authorization": "Bearer " + counterStore.getToken // Usamos el token de Pinia
-      }
+const sendLogin = async () => {
+  try {
+    let response = await apiService.loginUser({
+      username: username.value,
+      password: password.value
     });
 
     let data = await response.json();
-    return data;
-  };
 
-  const sendLogin = async () => {
-    let response = await login();
-
-    if (response["access_token"]) {
-      counterStore.setToken(response["access_token"]); // Guardamos el token usando Pinia
+    if (data["access_token"]) {
+      counterStore.setToken(data["access_token"]);
       message.value = "Acceso exitoso";
       isSuccess.value = true;
 
-      // Mostrar el token en la consola
-      console.log("Token recibido:", response["access_token"]);
+      console.log("Token recibido:", data["access_token"]);
 
-      // Obtener y mostrar los centros en la consola
-      let centers = await getCenters();
-      console.log("Centros recibidos:", centers);
-
-      // Redirigir a la página "Citas"
       setTimeout(() => {
         router.push('/menu');
       }, 1000);
-
     } else {
       message.value = "Usuario o contraseña incorrectos";
       isSuccess.value = false;
     }
-  };
-
+  } catch (error) {
+    console.error("Error al iniciar sesión:", error);
+    message.value = "Error al iniciar sesión";
+    isSuccess.value = false;
+  }
+};
 </script>
+
+

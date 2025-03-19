@@ -23,10 +23,10 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useCounterStore } from '../stores/counter';  // Importamos la tienda de Pinia
+import { useCounterStore } from '../stores/counter';
+import apiService from '../services/apiService';
 
-const counterStore = useCounterStore(); // Usamos la tienda de Pinia para gestionar el token
-
+const counterStore = useCounterStore();
 const username = ref("");
 const password = ref("");
 const name = ref("");
@@ -38,9 +38,8 @@ const message = ref("");
 const isSuccess = ref(false);
 
 const registerUser = async () => {
-  let response = await fetch("http://127.0.0.1:5000/register", {
-    method: "POST",
-    body: JSON.stringify({
+  try {
+    let response = await apiService.registerUser({
       username: username.value,
       password: password.value,
       name: name.value,
@@ -48,27 +47,25 @@ const registerUser = async () => {
       email: email.value,
       phone: phone.value,
       date: date.value
-    }),
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json"
+    });
+
+    let data = await response.json();
+    if (data.msg === "user created") {
+      message.value = "Usuario registrado con éxito";
+      isSuccess.value = true;
+
+      if (data.access_token) {
+        counterStore.setToken(data.access_token);
+      }
+    } else {
+      message.value = "Error al registrarse";
+      isSuccess.value = false;
     }
-  });
-
-  let data = await response.json();
-
-  if (data.msg === "user created") {
-    message.value = "Usuario registrado con éxito";
-    isSuccess.value = true;
-
-    // En este caso, puedes registrar el token en Pinia si se devuelve al registrar
-    if (data.access_token) {
-      counterStore.setToken(data.access_token); // Guardamos el token en la tienda
-      console.log("Token guardado:", data.access_token);
-    }
-  } else {
+  } catch (error) {
+    console.error("Error al registrarse:", error);
     message.value = "Error al registrarse";
     isSuccess.value = false;
   }
 };
 </script>
+
