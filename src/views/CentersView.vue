@@ -1,5 +1,7 @@
 <template>
   <div class="centros-container">
+    <!-- Botón Volver Atrás -->
+    <button @click="volverAtras" class="back-button">Volver</button>
     <h2>Lista de Centros</h2>
 
     <div v-if="centros.length > 0" class="centros-grid">
@@ -28,13 +30,20 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router"; // Importa useRouter
 import { useCounterStore } from "../stores/counter";
 import apiService from "../services/apiService";
 
+const router = useRouter();
 const counterStore = useCounterStore();
 const centros = ref([]);
-const citasCentro = ref([]);//lista las citas del centro seleccionado
+const citasCentro = ref([]);
 const centroSeleccionado = ref("");
+
+// Función para volver al menú principal
+const volverAtras = () => {
+  router.push('/menu');
+};
 
 const obtenerCentros = async () => {
   try {
@@ -74,6 +83,26 @@ onMounted(() => {
   background: linear-gradient(to right, #4b6cb7, #182848);
   color: white;
   padding: 20px;
+  position: relative;
+}
+
+/* Estilos del botón Volver Atrás */
+.back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background-color: #ff4b5c;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: #c0392b;
 }
 
 h2 {

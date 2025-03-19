@@ -22,6 +22,9 @@ import { ref } from 'vue';
 import { useCounterStore } from '../stores/counter';
 import apiService from '../services/apiService';
 import Swal from 'sweetalert2';
+import { useRouter } from "vue-router"; // Importa useRouter
+
+const router = useRouter();
 
 const counterStore = useCounterStore();
 const username = ref("");
@@ -31,6 +34,7 @@ const lastname = ref("");
 const email = ref("");
 const phone = ref("");
 const date = ref("");
+
 
 const registerUser = async () => {
   try {

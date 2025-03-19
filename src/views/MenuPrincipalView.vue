@@ -1,5 +1,7 @@
 <template>
   <div class="citas-container">
+                <!-- Botón Volver Atrás -->
+                <button @click="volverAtras" class="back-button">Volver</button>
     <h2>Gestión de Citas</h2>
 
     <button @click="accederPerfil" class="citas-button animate__animated animate__zoomIn">
@@ -29,6 +31,11 @@ import 'animate.css';
 
 const router = useRouter();
 const counterStore = useCounterStore();
+
+
+const volverAtras = () => {
+  router.push('/');
+};
 
 const errorMessage = ref("");
 const centros = ref([]);
@@ -96,5 +103,23 @@ h2 {
   color: #ff6961;
   font-size: 1.2rem;
   margin-top: 10px;
+}
+/* Estilos del botón Volver Atrás */
+.back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background-color: #ff4b5c;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: #c0392b;
 }
 </style>

@@ -1,5 +1,7 @@
 <template>
   <div class="citas-container animate__animated animate__fadeIn">
+        <!-- Botón Volver Atrás -->
+        <button @click="volverAtras" class="back-button">Volver</button>
     <h2>Gestión de Citas</h2>
 
     <div class="form-group">
@@ -46,8 +48,10 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useCounterStore } from '../stores/counter';
+import { useRouter } from "vue-router"; // Importa useRouter
 import apiService from '../services/apiService';
 
+const router = useRouter();
 const counterStore = useCounterStore();
 const centros = ref([]);
 const citas = ref([]);
@@ -55,6 +59,10 @@ const selectedCenter = ref('');
 const selectedDate = ref('');
 const errorMessage = ref('');
 const successMessage = ref('');
+
+const volverAtras = () => {
+  router.push('/menu');
+};
 
 const obtenerCentros = async () => {
   try {
@@ -235,5 +243,23 @@ label {
   color: #4CAF50;
   font-size: 1.2rem;
   margin-top: 10px;
+}
+/* Estilos del botón Volver Atrás */
+.back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background-color: #ff4b5c;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: #c0392b;
 }
 </style>

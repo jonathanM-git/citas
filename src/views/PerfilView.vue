@@ -1,7 +1,8 @@
 <template>
   <div class="perfil-container">
     <h2>Perfil del Usuario</h2>
-
+            <!-- Botón Volver Atrás -->
+            <button @click="volverAtras" class="back-button">Volver</button>
     <div v-if="user">
       <label>Usuario:</label>
       <p>{{ user.username }}</p>
@@ -34,12 +35,19 @@
 import { ref, onMounted } from 'vue';
 import { useCounterStore } from '../stores/counter';
 import apiService from '../services/apiService';
+import { useRouter } from "vue-router"; // Importa useRouter
 
+const router = useRouter();
 const user = ref(null);
 const message = ref("");
 const date = ref("");
 const counterStore = useCounterStore();
 const token = counterStore.getToken;
+
+const volverAtras = () => {
+  router.push('/menu');
+};
+
 
 const fetchUserProfile = async () => {
   if (!token) {
@@ -133,5 +141,23 @@ button:hover {
 .message {
   margin-top: 10px;
   font-weight: bold;
+}
+/* Estilos del botón Volver Atrás */
+.back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background-color: #ff4b5c;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: #c0392b;
 }
 </style>
