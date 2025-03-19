@@ -2,11 +2,22 @@
   <div class="citas-container">
     <h2>Gestión de Citas</h2>
 
-    <button @click="accederPerfil" class="citas-button">Acceder al Perfil</button>
-    <button @click="obtenerCentros" class="citas-button">Obtener Todos los Centros</button>
-    <button @click="crearCita" class="citas-button">Crear una Cita</button>
+    <button @click="accederPerfil" class="citas-button animate__animated animate__zoomIn">
+      <img src="../assets/img/perfil.png" alt="Perfil" class="icon" />
+      Acceder al Perfil
+    </button>
 
-    <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+    <button @click="obtenerCentros" class="citas-button animate__animated animate__zoomIn">
+      <img src="../assets/img/Centros.png" alt="Centros" class="icon" />
+      Obtener Todos los Centros
+    </button>
+
+    <button @click="crearCita" class="citas-button animate__animated animate__zoomIn">
+      <img src="../assets/img/CrearCita.png" alt="Citas" class="icon" />
+      Crear una Cita
+    </button>
+
+    <p v-if="errorMessage" class="error-message animate__animated animate__shakeX">{{ errorMessage }}</p>
   </div>
 </template>
 
@@ -14,6 +25,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useCounterStore } from '../stores/counter';
+import 'animate.css';
 
 const router = useRouter();
 const counterStore = useCounterStore();
@@ -47,63 +59,42 @@ const obtenerCentros = async () => {
 }
 
 h2 {
+  font-size: 2rem;
   margin-bottom: 20px;
 }
 
 .citas-button {
-  width: 200px;
-  padding: 10px;
-  margin: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Alinea el contenido a la izquierda */
+  width: 250px;
+  padding: 15px;
+  margin: 15px;
   background: #4b6cb7;
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
   cursor: pointer;
-  font-size: 1rem;
-  transition: background 0.3s;
+  font-size: 1.2rem;
+  transition: background 0.3s, transform 0.2s;
+  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
 }
 
 .citas-button:hover {
   background: #182848;
+  transform: scale(1.05);
+}
+
+.icon {
+  width: 40px;
+  height: 40px;
+  margin-right: 15px;
+  flex-shrink: 0; /* Evita que la imagen se reduzca */
 }
 
 .error-message {
   color: #ff6961;
   font-size: 1.2rem;
   margin-top: 10px;
-}
-
-.empty-message {
-  margin-top: 20px;
-  font-size: 1.2rem;
-  color: #ddd;
-}
-
-.centros-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
-  width: 100%;
-  max-width: 800px;
-  margin-top: 20px;
-}
-
-.centro-card {
-  background: white;
-  color: #333;
-  padding: 15px;
-  border-radius: 10px;
-  text-align: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.centro-card h3 {
-  font-size: 1.2rem;
-  font-weight: bold;
-}
-
-.centro-card p {
-  font-size: 1rem;
-  color: gray;
 }
 </style>

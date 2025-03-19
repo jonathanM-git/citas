@@ -7,10 +7,6 @@
       <input type="password" placeholder="Contraseña" v-model="password" class="input-field" />
 
       <button @click="sendLogin" class="login-button">Acceder</button>
-      <p v-if="message" :class="{'success': isSuccess, 'error': !isSuccess}">
-        {{ message }}
-      </p>
-
       <router-link to="/registro" class="register-link">Regístrate aquí</router-link>
     </div>
   </div>
@@ -21,13 +17,12 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useCounterStore } from '../stores/counter';
 import apiService from '../services/apiService';
+import Swal from 'sweetalert2';
 
 const router = useRouter();
 const counterStore = useCounterStore();
 const username = ref("");
 const password = ref("");
-const message = ref("");
-const isSuccess = ref(false);
 
 const sendLogin = async () => {
   try {
@@ -40,24 +35,31 @@ const sendLogin = async () => {
 
     if (data["access_token"]) {
       counterStore.setToken(data["access_token"]);
-      message.value = "Acceso exitoso";
-      isSuccess.value = true;
-
-      console.log("Token recibido:", data["access_token"]);
+      Swal.fire({
+        title: "¡Acceso exitoso!",
+        text: "Redirigiendo...",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false
+      });
 
       setTimeout(() => {
         router.push('/menu');
-      }, 1000);
+      }, 1500);
     } else {
-      message.value = "Usuario o contraseña incorrectos";
-      isSuccess.value = false;
+      Swal.fire({
+        title: "Error",
+        text: "Usuario o contraseña incorrectos",
+        icon: "error"
+      });
     }
   } catch (error) {
     console.error("Error al iniciar sesión:", error);
-    message.value = "Error al iniciar sesión";
-    isSuccess.value = false;
+    Swal.fire({
+      title: "Error",
+      text: "Hubo un problema al iniciar sesión",
+      icon: "error"
+    });
   }
 };
 </script>
-
-

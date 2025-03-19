@@ -12,10 +12,6 @@
       <input type="text" placeholder="Fecha de nacimiento (DD/MM/YYYY)" v-model="date" class="input-field" />
       
       <button @click="registerUser" class="register-button">Registrarse</button>
-      <p v-if="message" :class="{'success': isSuccess, 'error': !isSuccess}">
-        {{ message }}
-      </p>
-
       <router-link to="/" class="login-link">Volver al login</router-link>
     </div>
   </div>
@@ -25,6 +21,7 @@
 import { ref } from 'vue';
 import { useCounterStore } from '../stores/counter';
 import apiService from '../services/apiService';
+import Swal from 'sweetalert2';
 
 const counterStore = useCounterStore();
 const username = ref("");
@@ -34,8 +31,6 @@ const lastname = ref("");
 const email = ref("");
 const phone = ref("");
 const date = ref("");
-const message = ref("");
-const isSuccess = ref(false);
 
 const registerUser = async () => {
   try {
@@ -51,21 +46,30 @@ const registerUser = async () => {
 
     let data = await response.json();
     if (data.msg === "user created") {
-      message.value = "Usuario registrado con éxito";
-      isSuccess.value = true;
+      Swal.fire({
+        title: "¡Registro exitoso!",
+        text: "Usuario registrado correctamente",
+        icon: "success",
+        confirmButtonText: "OK"
+      });
 
       if (data.access_token) {
         counterStore.setToken(data.access_token);
       }
     } else {
-      message.value = "Error al registrarse";
-      isSuccess.value = false;
+      Swal.fire({
+        title: "Error",
+        text: "Error al registrarse",
+        icon: "error"
+      });
     }
   } catch (error) {
     console.error("Error al registrarse:", error);
-    message.value = "Error al registrarse";
-    isSuccess.value = false;
+    Swal.fire({
+      title: "Error",
+      text: "Hubo un problema con el registro",
+      icon: "error"
+    });
   }
 };
 </script>
-
