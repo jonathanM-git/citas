@@ -4,6 +4,7 @@ import RegistroView from '@/views/RegistroView.vue'
 import CitasView from '@/views/CitasView.vue'
 import PerfilView from '@/views/PerfilView.vue'
 import MenuPrincipalView from '@/views/MenuPrincipalView.vue'
+import CentersView from '@/views/CentersView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -29,7 +30,12 @@ const router = createRouter({
     { path: '/citas',
       name: 'citas',
       component: CitasView
-    } 
+    },
+    { path: '/centers',
+      name: 'centers',
+      component: CentersView
+    },
+
     
   ]
 })

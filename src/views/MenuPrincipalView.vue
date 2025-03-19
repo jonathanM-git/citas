@@ -7,15 +7,6 @@
     <button @click="crearCita" class="citas-button">Crear una Cita</button>
 
     <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
-
-    <div v-if="centros.length > 0" class="centros-grid">
-      <div v-for="centro in centros" :key="centro.name" class="centro-card">
-        <h3>{{ centro.name }}</h3>
-        <p>{{ centro.address }}</p>
-      </div>
-    </div>
-
-    <p v-else class="empty-message">No hay centros disponibles.</p>
   </div>
 </template>
 
@@ -39,28 +30,7 @@ const crearCita = () => {
 };
 
 const obtenerCentros = async () => {
-  try {
-    let response = await fetch("http://127.0.0.1:5000/centers", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "Authorization": "Bearer " + counterStore.getToken
-      }
-    });
-
-    if (!response.ok) {
-      throw new Error("Error en la solicitud: " + response.status);
-    }
-
-    let data = await response.json();
-    centros.value = data; // Guardamos los centros en la lista
-    errorMessage.value = "";
-
-  } catch (error) {
-    errorMessage.value = "Error al obtener centros";
-    console.error("Error:", error);
-  }
+  router.push('/centers');
 };
 </script>
 
